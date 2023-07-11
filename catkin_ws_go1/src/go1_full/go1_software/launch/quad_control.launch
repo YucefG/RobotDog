@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- load the URDF file into the parameter server -->
+  <param name="robot_description" command="cat $(find go1_description)/urdf/go1.urdf"/>
+  
+  <!-- load the controllers -->
+  <node name="balance3leg" pkg="go1_software" type="balance3leg" output="screen" />
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	respawn="false" output="screen">
+    <remap from="/joint_states" to="/go1/joint_states" />
+  </node>
+
+</launch>
