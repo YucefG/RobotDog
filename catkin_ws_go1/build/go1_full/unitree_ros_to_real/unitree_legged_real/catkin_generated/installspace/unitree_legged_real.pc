@@ -1,8 +1,0 @@
-prefix=/data/grebici/from_data/catkin_ws_go1/install
-
-Name: unitree_legged_real
-Description: Description of unitree_legged_real
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

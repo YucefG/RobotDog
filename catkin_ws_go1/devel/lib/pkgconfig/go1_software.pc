@@ -1,8 +1,0 @@
-prefix=/data/grebici/from_data/catkin_ws_go1/devel
-
-Name: go1_software
-Description: Description of go1_software
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: unitree_legged_msgs
