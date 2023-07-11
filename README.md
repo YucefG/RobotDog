@@ -110,7 +110,7 @@ roscore
 `ssh unitree@192.168.123.14` password is ...   
 2) Kill onboard camera processes (optional)  
 `./start.bash`
-3) Export ROS master to be the desktop (offboard PC from which we connect). This way, when you add ROS messages to communicate the status of the servos, everything is on the same network. 
+3) Export ROS master to be the desktop (offboard PC from which we connect). This way, when you add ROS messages to communicate the status of the servos, everything is on the same network ([more info here](https://answers.ros.org/question/272065/specification-of-ros_master_uri-and-ros_hostname/)). 
 ```
 export ROS_MASTER_URI=http://128.178.148.56:11311
 export ROS_IP=128.178.148.56
@@ -144,4 +144,13 @@ rosrun go1_software controller_demo_4
 
 The demonstration is ready to work! 
 
-
+# Demos 2 and 3
+To setup these demonstrations, the steps are merely the same.   
+A few notes concerning them should be highlighted : 
+- For each demo, we advise to create a new virtual environment, due to conflicting versions of libraries.   
+- Camera visualization are not properly set up as on demonstration 4. 
+- The head node is not used, unplug it. 
+## Demo 2
+Instead of `rosrun go1_software controller_demo_4` run `rosrun go1_software high_lvl_controller`
+## Demo 3
+Instead of `rosrun go1_software controller_demo_4` run `rosrun go1_software controller_demo_3`
