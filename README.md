@@ -1,14 +1,13 @@
 # RobotDog
  Teaching a Robot New tricks - A project made by Guillaume Krafft and Yucef Grebici. Supervised by Guillaume Bellegarda and Auke Ijkspeert at BIOROB lab at EPFL. 
 
+This Readme goes through the steps to set up the ROS environment to execute the final demonstration, showed below. 
+
+
+
 <p align="center">
-  <img src="https://github.com/YucefG/ThreeLeggedBalance/assets/50379011/6659f2e2-724d-45d9-8914-eb5f9b2fdfb1" alt="Sublime's custom image", width="400"/>
+  <img src="ezgif.com-optimize.gif" alt="Sublime's custom image", width="800"/>
 </p>
-![ezgif com-optimize](https://github.com/YucefG/RobotDog/assets/50379011/c884a267-f917-4947-a285-9138c0ee1d35)
-
-
-This Readme goes through the steps to set up the ROS environment to execute the final demonstration described in our report. 
-
 
 
 # Installation steps
