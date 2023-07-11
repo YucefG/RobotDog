@@ -151,6 +151,6 @@ A few notes concerning them should be highlighted :
 - Camera visualization are not properly set up as on demonstration 4. 
 - The head node is not used, unplug it. 
 ## Demo 2
-Instead of `rosrun go1_software controller_demo_4` run `rosrun go1_software high_lvl_controller`
+Instead of `rosrun go1_software controller_demo_4` run `rosrun go1_software controller_demo_2`
 ## Demo 3
 Instead of `rosrun go1_software controller_demo_4` run `rosrun go1_software controller_demo_3`
