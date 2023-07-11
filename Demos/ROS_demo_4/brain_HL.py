@@ -26,6 +26,8 @@ DIST_CAM_USER = 2 # in m
 DIST_ROT_GO1_CAM = 0.2 # in m
 AZIMUTH_FOV = 90 # in degrees
 ELEVATION_FOV = 90 # in degrees
+TURNING_VELOCITY = 0.5 #rad/s
+SEARCHING_AZ = 25 #degrees
 
 AZIMUTH_MAX = 30
 AZIMUTH_MIN = -30
@@ -147,9 +149,11 @@ class ImageProcessor:
 
 
     def callbackFrame(self, data):
-        '''Function called each time new data is recived from the video node
+        '''
+        Function called each time new data is recived from the video node
         passes the keypoint to the person_in_front() function to check if someone is in the center of the frame
-        modifies the self.hand_action if conditions are met'''
+        modifies the self.hand_action if conditions are met
+        '''
         keypoints = data.keypoints
         hand_action = data.hand_action
         self.personInFront =  self.person_in_front(keypoints)
@@ -169,21 +173,22 @@ class ImageProcessor:
                 self.hand_action = hand_action
         else:
             self.hand_action = None # no adquate hand singal found
-            # pass # reuse the last action
-    #    print(f"general mode is: {self.generalMode}")
-    #    print(f"audio mode is: {self.soundMode}")
 
 
     def callbackHead(self, data):
-        #print(f"azimuth callback value: {data.z}")
+        '''
+        Position in tics from head servos 
+        '''
         self.current_azimuth = data.z
         self.current_elevation = data.y
 
 
     def callbackAudio(self, data):
-        '''Function called when new data is recieved from the audi node
+        '''
+        Function called when new data is recieved from the audio node
         changes the generlMode if a particular keyword is heard
-        can also sent the direction of the sound if needed'''
+        can also sent the direction of the sound if needed
+        '''
         
         data = str(data)[7:-1]  #remove the "data: " and the "'" at the end
         data = data.split("#")
@@ -199,7 +204,7 @@ class ImageProcessor:
         if self.soundMode == "bed": # lay down and do nothing
             self.generalMode = "bed"
         
-        if self.soundMode == "dog": # multimodal live ineraction
+        if self.soundMode == "dog": # multimodal live interaction
             self.generalMode = "dog"
         
         if self.soundMode == "visual": # visual only live interaction
@@ -218,6 +223,9 @@ class ImageProcessor:
         print("actual generalmode in audio callback function:" + self.generalMode)
 
     def keypoints2servo(self, keypoints):
+        """
+        Transforms shoulder keypoint values into relative head az and elev angles
+        """
         #value between 0 and 1. 
         left_shoulder = keypoints[self.posDict["left shoulder"]]
         right_shoulder = keypoints[self.posDict["right shoulder"]]
@@ -225,85 +233,59 @@ class ImageProcessor:
         mid_shoulders_x = (left_shoulder.x+right_shoulder.x)/2 - 0.5
         mid_shoulders_y = (left_shoulder.y+right_shoulder.y)/2 - 0.5
 
-        #if near zero, azimuth and elevation near zero. Scaled by camera fov
-
-        #keypoints are measured x-y errors from center of frame. 
-
-
-        #sensed on actual frame
+        #Scaled by camera fov, keypoints are measured x-y errors from center of frame. 
         azimuth = mid_shoulders_x*AZIMUTH_FOV   
-        elevation = -mid_shoulders_y*ELEVATION_FOV
-
-       # print(f"azimuth is: {azimuth}")
-       # print(f"elevation is:  {elevation}")       
+        elevation = -mid_shoulders_y*ELEVATION_FOV     
 
         return azimuth, elevation
 
 
     def head_tracking(self):
+        """
+        publishes on head command topic if the tracking error is too high, if tracking is enabled
+        otherwise, moves to initial head angles.
+        """
         head_msg = Point()
         error_az = abs(self.command_azimuth)
         error_el = abs(self.command_elevation)
 
+        #check if tracking is enabled
         if(self.followFlag):
             actual_elevation = serv2deg(self.current_elevation) 
             actual_azimuth = serv2deg(self.current_azimuth)
 
-       #     print(f"Actual elevation: {actual_elevation}")
-      #      print(f"command elevation: {self.command_elevation}")
-
-     #       print(f"target elevation : {actual_elevation + self.command_elevation}")
-
-    #        print(f"Actual azimuth: {actual_azimuth}")
-    #        print(f"command azimuth: {self.command_azimuth}")
-    #        print(f"target azimuth: {actual_azimuth + self.command_azimuth}")
-
-            
-            '''
-            if((actual_azimuth + self.command_azimuth)>AZIMUTH_MAX):
-                print("max azimuth is reached")
-
-            elif((actual_azimuth + self.command_azimuth)<AZIMUTH_MIN):
-                print("max azimuth is reached")
-                
-            elif((actual_elevation + self.command_elevation)>ELEV_MAX):
-                print("max elevation is reached")
-                
-            elif((actual_elevation + self.command_elevation)<AZIMUTH_MIN):
-                print("min elevation is reached")
-            ''' 
-
+            # waits that error surpasses a threshold before moving
             if(error_az>5 or error_el>10):
                 if(error_az>10):
                     head_msg.z = self.command_azimuth 
                 if(error_el>10):
                     head_msg.y = self.command_elevation 
+                # check if max azimuth is reached
                 if(actual_azimuth + head_msg.z>AZIMUTH_MAX):
                     if(abs(AZIMUTH_MAX - actual_azimuth)>5):
-                #        print("max azimuth is reached")
                         head_msg.z = AZIMUTH_MAX - actual_azimuth
                     else: 
                         head_msg.z =0 
+                # check if min azimuth is reached
                 if(actual_azimuth + head_msg.z<AZIMUTH_MIN):
                     if(abs(AZIMUTH_MIN - actual_azimuth)>5):
-                  #      print("min azimuth is reached")
                         head_msg.z = AZIMUTH_MIN - actual_azimuth
                     else: 
                         head_msg.z =0 
-               #     print(f"sent az is: {head_msg.z}")
 
+                # check if max elevation is reached
                 if(actual_elevation + head_msg.y > ELEV_MAX):
                     if(abs(ELEV_MAX - actual_elevation)>5):
-                   #     print("max elevation is reached")
                         head_msg.y = ELEV_MAX - actual_elevation
                     else: 
                         head_msg.y=0 
+                # check if min elevation is reached
                 if(actual_elevation + head_msg.y < ELEV_MIN):
                     if(abs(ELEV_MIN - actual_elevation)>5):
-                    #    print("min elevation is reached")
                         head_msg.y = ELEV_MIN - actual_elevation
                     else: 
                         head_msg.y=0 
+        # if tracking not enabled, back to initial position
         else: 
             if(abs(serv2deg(self.current_azimuth))>5):
                 head_msg.z = -serv2deg(self.current_azimuth)
@@ -312,11 +294,16 @@ class ImageProcessor:
 
 
         self.pub_head.publish(head_msg)
-   #     print(head_msg)
 
 
 
     def align_head_with_body(self, head_yaw_angle):
+        '''
+        Reads head azimuth angle, when camera has already centered the human, and transforms
+        it into a readjustment yaw angle given to the go1 to align its body with the camera in direction 
+        of the human.
+        '''
+                
         # read last neck yaw angle and transform it in 
         vel_msg = Twist()        
         rota_time = go1Angle2movingTime(camAngle2Go1Angle(self.current_azimuth), ROTATION_SPEED)
@@ -349,67 +336,54 @@ class ImageProcessor:
         vel_msg = Twist()
         pose_msg = Twist()
         head_msg = Point()
-
-    #    print("general mode is: ", self.generalMode)
         
         #### FIND_HUMAN MODE ####
         while(self.generalMode == 'find_human'):
             sound_direction = self.soundDirection
             self.pub_mode.publish(self.generalMode)
             head_yaw_angle = 0
+            # sound heard at right side, turns right with extra negative angle on az
             if sound_direction == "right":
                 head_yaw_angle = -MAX_HEAD_YAW_ANGLE
-            #    print(serv2deg(self.current_azimuth))
-            #    print(head_yaw_angle)
                 head_msg.z = head_yaw_angle - serv2deg(self.current_azimuth)
-                head_msg.y = 25 - serv2deg(self.current_elevation)
-            #    print("publishing head right")
-            #    print(head_msg)
-
+                head_msg.y = SEARCHING_AZ - serv2deg(self.current_elevation)
                 self.pub_head.publish(head_msg)
+
+            # sound heard at left side, turns left with extra positive angle on az
             elif sound_direction == "left":
                 head_yaw_angle = MAX_HEAD_YAW_ANGLE
                 head_msg.z = head_yaw_angle - serv2deg(self.current_azimuth)
-            #    print(serv2deg(self.current_azimuth))
-            #    print(head_yaw_angle)
-                head_msg.y = 25 - serv2deg(self.current_elevation)
+                head_msg.y = SEARCHING_AZ - serv2deg(self.current_elevation)
                 print("publishing head left")
-           #     print(head_msg)
-
                 self.pub_head.publish(head_msg)
+
+            #sound coming from behind
             elif not(self.personInFront):
                 head_yaw_angle = -MAX_HEAD_YAW_ANGLE
                 head_msg.z = head_yaw_angle - serv2deg(self.current_azimuth)
-            #    print(serv2deg(self.current_azimuth))
-            #    print(head_yaw_angle)
-                head_msg.y = 25 - serv2deg(self.current_elevation)
+                head_msg.y = SEARCHING_AZ - serv2deg(self.current_elevation)
                 print("publishing head left because behind")
                 self.pub_head.publish(head_msg)
 
-            print(self.personInFront)
+            #found human, body centering enabled
             if self.personInFront:
-            #    self.generalMode = 'off'
                 self.pub_mode.publish("center_human")
-
                 print("found human just by turning head")
                 self.align_head_with_body(head_yaw_angle)
+            #human not found, robot starts to turn on itselft w.r.t a searching time
             else:
                 timer = 0
-            #    vel_msg.angular.z = np.sign(head_yaw_angle)*0.5
                 print("looking for human by moving body")
-                while (timer<SEARCHING_TIME and self.generalMode == 'find_human'):
-                    print(sound_direction)
-          
+                while (timer<SEARCHING_TIME and self.generalMode == 'find_human'):                    
                     if sound_direction == "left":
-                        vel_msg.angular.z = 0.5
+                        vel_msg.angular.z = TURNING_VELOCITY
                     else:
-                        vel_msg.angular.z =-0.5
+                        vel_msg.angular.z =-TURNING_VELOCITY
                     self.pub_vel.publish(vel_msg)
                     timer += 0.05
                     time.sleep(0.05)
 
                     if self.personInFront:
-                    #    self.generalMode = 'off'
                         print("found human by moving body")
                         self.align_head_with_body(head_yaw_angle)
                         break
@@ -422,7 +396,6 @@ class ImageProcessor:
         if(self.generalMode == 'visual'): 
             self.pub_mode.publish(self.generalMode)
 
-            #       print('----------------  hand_action !!! ------------------')
             print(self.hand_action)
             print()
 
@@ -435,18 +408,11 @@ class ImageProcessor:
             elif(self.hand_action == "stay"):
                 self.pub_hand.publish('stay')
 
-            # elif(self.hand_action == "come" and self.soundMode == "follow"):
-            #     self.followFlag = not(self.followFlag) # toggle the follow flag
-            #     print("follow flag: " + str(self.followFlag))
-            #     self.pub_hand.publish('come')
             self.head_tracking()
 
         #### DOG MODE ####
         if (self.generalMode == 'dog'):
             self.pub_mode.publish(self.generalMode)
-
-#            print('----------------  hand_action !!! ------------------')
-#            print(self.hand_action)
 
             if(self.hand_action == "sit" and self.soundMode == "six"):
                 print("sit")
@@ -460,6 +426,7 @@ class ImageProcessor:
                 print("stay")
                 self.pub_hand.publish('stay')
 
+            # if visual and audio cue are not matching, when showing specific hand actions -> incomprehension
             if(not(self.hand_action == "down" and self.soundMode == "down") and 
                 not(self.hand_action == "stay" and self.soundMode == "up") and
                 not(self.hand_action == "sit" and self.soundMode == "six")and 
@@ -471,14 +438,6 @@ class ImageProcessor:
                 self.pub_hand.publish('stay')
             
             self.head_tracking()
-
-
-
-            # elif(self.hand_action == "come" and self.soundMode == "follow"):
-            #     self.followFlag = not(self.followFlag) # toggle the follow flag
-            #     print("follow flag: " + str(self.followFlag))
-            #     self.pub_hand.publish('follow')
-
 
         #### HAPPY MODE ####
         if(self.generalMode == 'happy'):

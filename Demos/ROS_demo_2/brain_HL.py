@@ -283,12 +283,6 @@ class ImageProcessor:
 
             # Process the image to determine direction
 
-       #     print('---------------- image recue ------------------')
-            #print("en commande vel par process de frames")
-            # Create a Twist message with the appropriate velocity command
-        #    print("waiting for camera info topic")
-        #    rospy.wait_for_message("/video_info_topic", String, timeout=None)
-
             if self.poseDirection == 'forward':
                 print('move forward')
                 vel_msg.linear.x = 0.5
