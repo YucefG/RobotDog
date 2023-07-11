@@ -1,0 +1,8 @@
+#!/bin/bash
+
+systemctl stop --user --now pulseaudio
+systemctl stop --user --now pulseaudio.socket
+systemctl start --user --now pipewire
+systemctl start --user --now pipewire-pulse
+systemctl start --user --now pipewire-pulse.socket
+pactl info

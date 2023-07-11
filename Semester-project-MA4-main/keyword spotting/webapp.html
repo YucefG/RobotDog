@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keyword Recorder</title>
+  <style>
+    body {
+      background-color: #00CED1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      color: #FFFFFF;
+    }
+
+    p {
+      color: #FFFFFF;
+      margin: 10px 0;
+    }
+
+    #currentKeyword {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #recordButton {
+      width: 100px;
+      height: 100px;
+      background-color: #FFFFFF;
+      border-radius: 50%;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    #recordButton:focus {
+      outline: none;
+    }
+
+    #countdown {
+      font-size: 40px;
+      color: #000000;
+    }
+
+    #protocol {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Keyword Recorder</h1>
+  <p id="currentKeyword"></p>
+  <button id="recordButton" disabled></button>
+  <p id="countdown"></p>
+  <p id="protocol">Please click the "Record" button to start recording each keyword. Each keyword should be recorded three times. Once you finish recording all keywords, the process will be completed. Make sure to grant microphone access when prompted.</p>
+
+  <script>
+    var keywords = ['Keyword 1', 'Keyword 2', 'Keyword 3', 'Keyword 4', 'Keyword 5'];
+    var recordings = [];
+    var currentRecordingIndex = 0;
+    var currentIteration = 1;
+    var currentKeywordElement = document.getElementById('currentKeyword');
+    var iterationIndicatorElement = document.getElementById('iterationIndicator');
+    var recordButton = document.getElementById('recordButton');
+    var countdownElement = document.getElementById('countdown');
+    var countdown;
+  
+    function startRecording() {
+      currentKeywordElement.innerText = 'Recording: ' + keywords[currentRecordingIndex];
+      iterationIndicatorElement.innerText = 'Iteration: ' + currentIteration + '/3';
+  
+      countdown = 3;
+      countdownElement.innerText = countdown;
+  
+      var countdownInterval = setInterval(function() {
+        countdown--;
+        countdownElement.innerText = countdown;
+        if (countdown === 0) {
+          clearInterval(countdownInterval);
+          countdownElement.innerText = 'Recording';
+          recordButton.disabled = true;
+  
+          var chunks = [];
+          var constraints = { audio: true };
+  
+          navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+              var mediaRecorder = new MediaRecorder(stream);
+  
+              mediaRecorder.ondataavailable = function(event) {
+                chunks.push(event.data);
+              };
+  
+              mediaRecorder.onstop = function() {
+                var blob = new Blob(chunks, { type: 'audio/webm' });
+                chunks = [];
+                recordings.push(blob);
+  
+                currentIteration++;
+  
+                if (currentIteration > 3) {
+                  currentRecordingIndex++;
+                  currentIteration = 1;
+                }
+  
+                if (currentRecordingIndex < keywords.length) {
+                  currentKeywordElement.innerText = 'Recording: ' + keywords[currentRecordingIndex];
+                  iterationIndicatorElement.innerText = 'Iteration: ' + currentIteration + '/3';
+                  recordButton.disabled = false;
+                } else {
+                  // All recordings are done, you can send them to the server or do further processing.
+                  console.log(recordings);
+                  currentKeywordElement.innerText = 'Recording Completed';
+                  iterationIndicatorElement.innerText = '';
+                  recordButton.disabled = true;
+                }
+              };
+  
+              mediaRecorder.start();
+  
+              setTimeout(function() {
+                mediaRecorder.stop();
+              }, 1000);
+            })
+            .catch(function(error) {
+              console.log('Error accessing microphone:', error);
+            });
+        }
+      }, 1000);
+    }
+  
+    recordButton.addEventListener('click', function() {
+      this.disabled = true;
+      startRecording();
+    });
+  
+    // Ask for microphone access when the page loads
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function(stream) {
+        recordButton.disabled = false;
+      })
+      .catch(function(error) {
+        console.log('Error accessing microphone:', error);
+      });
+  
+    // Start the recording process when the page loads
+    currentKeywordElement.innerText = 'Recording: ' + keywords[currentRecordingIndex];
+    iterationIndicatorElement.innerText = 'Iteration: ' + currentIteration + '/3';
+    countdownElement.innerText = '';
+  </script> 
+</body>
+</html>

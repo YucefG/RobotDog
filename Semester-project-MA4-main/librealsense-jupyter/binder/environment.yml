@@ -1,0 +1,21 @@
+name: jupyter_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - notebook
+  - ipywidgets
+  - ipython
+  - h5py
+  - numba
+  - pythreejs
+  - python=3.9
+  - pip:
+    - laspy
+    - appmode
+    - pyrealsense2
+    - opencv-python

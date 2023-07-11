@@ -1,0 +1,9 @@
+*.bag
+*.mp4
+/keyword spotting/google_speech_recognition_v2/
+/keyword spotting/triplet_loss_kws/
+/keyword spotting/wav2vec2-base-finetuned-ks
+/keyword spotting/wav2vec2-base-finetuned-ks-32
+/action recognition pipeline/hand poses/hands
+/action recognition pipeline/hand poses/rps_data_sample
+/ROS_demo_3/kws_model
