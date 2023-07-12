@@ -36,18 +36,18 @@ source YOUR_WS_PATH/catkin_ws_go1/devel/setup.bash
 ```
 Sourcing the go1 software enables us to use our custom message package, specially made to transmit the human keypoints through ROS topics. 
 #### Step 2: 
-Navigate to `Demos/ROS_demo_4`. 
+Navigate to *Demos/ROS_demo_4*. 
 Make sure the Intel RealSense camera is plugged on a **usb 3** port. Run and install the missing packages: 
 ```
 python3 ros_video_topic.py
 ```
-If an error concerning `Frame_info_3` is occuring, the catkin_ws_go1 package has not been properly sourced. A visualization window should appear if working.
+If an error concerning *Frame_info_3* is occuring, the catkin_ws_go1 package has not been properly sourced. A visualization window should appear if working.
 
 Use `rostopic echo /ros_video_topic`, to check that the node is publishing, only when it sees a person in front of the camera.   
 Keep it running.
 
 #### Step 2: (Optionnal)
-To gain time, adapt `video_setup.sh` to your file paths and only run it to launch the vision node. 
+To gain time, adapt *video_setup.sh* to your file paths and only run it to launch the vision node. 
 
 ## Audio
 For the audio part of the system, the 3 mics are mixed into one 3-channels virtual microphone input.
@@ -68,7 +68,7 @@ If there are issues with the virtual microphones you can run removevirtualmics.s
 Run search_audio_devices.py to list all the audio devices connected to the computer. Note the index of the 3 channels virtual microphone (it should be one of the last indexes) and modify AUDIO_DEVICE in the audio node of the demo you want to run.
 
 #### Step 5: 
-Navigate to `Demos/ROS_demo_4`. Activate the virtual environment.   
+Navigate to *Demos/ROS_demo_4*. Activate the virtual environment.   
 Run and install the missing packages: 
 ```
 python3 ros_video_topic.py
@@ -89,7 +89,7 @@ source YOUR_WS_PATH/catkin_ws_go1/devel/setup.bash
 ```
 
 #### Step 1: 
-Navigate to `Demos/ROS_demo_4`. 
+Navigate to *Demos/ROS_demo_4*. 
 Run and install the missing packages: 
 ```
 python3 brain_HL.py
