@@ -6,7 +6,7 @@ This Readme goes through the steps to set up the ROS environment to execute the 
 
 
 <p align="center">
-  <img src="media/ezgif.com-optimize.gif" alt="Sublime's custom image", width="800"/>
+  <img src="media/robotDog.gif" alt="Sublime's custom image", width="800"/>
 </p>
 
 
