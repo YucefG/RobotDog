@@ -13,7 +13,7 @@ This Readme goes through the steps to set up the ROS environment to execute the 
 # Installation
 The following instructions are made to setup and test the ROS workspace,
 and install the right libraries in the virtual environment.   
-In the **Hardware Setup** steps, it is assumed that all the **Installation** have been achieved. 
+In the **Hardware Setup** steps, it is assumed that all the **Installation** steps have been achieved. 
 
 Create a python virtual environment. Don't activate it yet.   
 In each new terminal, run:  
