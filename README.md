@@ -27,7 +27,7 @@ Go through the installation steps of [Guillaume Bellegarda's go1 repository](htt
 ## Vision
 #### Step 0
 Run `roscore` in an independent terminal. 
-Install the [KeyWord Spotter folder](https://drive.google.com/drive/folders/1v-2Oh_Lg9upQyCzzcszk2qOSOBI7NTOM?usp=sharing) and place it in the demo_5_ROS folder
+Install the [KeyWord Spotter folder](https://drive.google.com/drive/folders/1v-2Oh_Lg9upQyCzzcszk2qOSOBI7NTOM?usp=sharing) and place it in the *ROS_demo_5* folder
 #### Step 1: 
 In a new terminal, activate the virtual environment. 
 Also source the go1 workspace by running: 
