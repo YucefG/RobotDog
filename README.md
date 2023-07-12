@@ -1,7 +1,13 @@
 # RobotDog
  Teaching a Robot New tricks - A project made by Guillaume Krafft and Yucef Grebici. Supervised by Guillaume Bellegarda and Auke Ijkspeert at BIOROB lab at EPFL. 
 
-This Readme goes through the steps to set up the ROS environment to execute the final demonstration described in our report. 
+This Readme goes through the steps to set up the ROS environment to execute the final demonstration, showed below. 
+
+
+
+<p align="center">
+  <img src="ezgif.com-optimize.gif" alt="Sublime's custom image", width="800"/>
+</p>
 
 
 # Installation steps
@@ -21,6 +27,7 @@ Go through the installation steps of [Guillaume Bellegarda's go1 repository](htt
 ## Vision
 #### Step 0
 Run `roscore` in an independent terminal. 
+Install the [KeyWord Spotter folder](https://drive.google.com/drive/folders/1v-2Oh_Lg9upQyCzzcszk2qOSOBI7NTOM?usp=sharing) and place it in the demo_5_ROS folder
 #### Step 1: 
 In a new terminal, activate the virtual environment. 
 Also source the go1 workspace by running: 
