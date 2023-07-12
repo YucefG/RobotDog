@@ -10,10 +10,10 @@ This Readme goes through the steps to set up the ROS environment to execute the 
 </p>
 
 
-# Installation steps
+# Installation
 The following instructions are made to setup and test the ROS workspace,
 and install the right libraries in the virtual environment.   
-In the Hardware steps, it is assumed that all the prelimary have been done. 
+In the *Hardware Setup* steps, it is assumed that all the *Installation steps* have been achieved. 
 
 Create a python virtual environment. Don't activate it yet.   
 In each new terminal, run:  
@@ -22,7 +22,7 @@ source /opt/ros/noetic/setup.bash
 ```
 
 ## Go1 software
-Go through the installation steps of [Guillaume Bellegarda's go1 repository](https://github.com/guillaume10/go1_full/tree/master). 
+Go through the installation steps of [Guillaume Bellegarda's go1 repository](https://github.com/guillaume10/go1_full/tree/master), by placing the *go1_software* and the *custom_msg* packages from this repo into the *src* folder of your ROS workspace. Name this workspace *catkin_ws_go1*. 
 
 ## Vision
 #### Step 0
